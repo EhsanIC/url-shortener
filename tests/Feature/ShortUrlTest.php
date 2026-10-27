@@ -38,6 +38,21 @@ class ShortUrlTest extends TestCase
         $this->get('/'.$shortUrl)
             ->assertRedirect('https://google.com/')
             ->assertStatus(302);
+
+        // 4. The click is tracked
+        $this->assertDatabaseHas('analytics', [
+            'short_url' => $shortUrl,
+            'click_count' => 1,
+        ]);
+
+        // 5. A second visit bumps the counter to 2
+        $this->get('/'.$shortUrl)
+            ->assertStatus(302);
+
+        $this->assertDatabaseHas('analytics', [
+            'short_url' => $shortUrl,
+            'click_count' => 2,
+        ]);
     }
 
     public function test_it_rejects_invalid_urls(): void

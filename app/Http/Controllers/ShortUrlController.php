@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShortUrlRequest;
+use App\Models\Analytics;
 use App\Models\ShortUrl;
 use App\Services\ShortCodeGenerator;
 use Illuminate\Http\JsonResponse;
@@ -27,6 +28,8 @@ class ShortUrlController extends Controller
      */
     public function show(ShortUrl $shortUrl)
     {
+        Analytics::recordHit($shortUrl->short_url);
+
         return redirect()->away($shortUrl->original_url);
     }
 }
