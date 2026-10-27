@@ -2,19 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\ShortUrl;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ShortCodeGenerator
 {
     /**
-     * Generate a short code that doesn't already exist in the DB.
+     * Generate a short code that doesn't already exist in the given table.
      */
-    public static function generate(int $length = 8): string
-    {
+    public static function generate(
+        int $length = 8,
+        string $table = 'short_urls',
+        string $column = 'short_url',
+    ): string {
         do {
             $code = Str::random($length);
-        } while (ShortUrl::where('short_url', $code)->exists());
+        } while (DB::table($table)->where($column, $code)->exists());
 
         return $code;
     }

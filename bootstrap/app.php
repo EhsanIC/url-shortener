@@ -13,8 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->validateCsrfTokens(
-            except: ['short-urls'],
+            except: ['short-urls', 'pastebins', 'pastebins/*'],
         );
+
+        // Pastes must keep their exact whitespace (trailing newlines, indentation).
+        $middleware->trimStrings(except: ['text']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
